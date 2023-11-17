@@ -1,0 +1,2 @@
+{"message":"大橋駅から10km以内","query":{"bool":{"must":{"match_all":{}},"filter":{"geo_distance":{"distance":"10km","location":{"lat":33.55908463306123,"lon":130.42676118439906}}}}}}
+{"message":"田端駅から5km以内","query":{"bool":{"must":{"match_all":{}},"filter":{"geo_distance":{"distance":"5km","location":{"lat":35.73800329054666,"lon":139.76104269923147}}}}}}
