@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "area": {
+        "properties": {
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "prefecture": {
+        "properties": {
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "line": {
+        "properties": {
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "postal": {
+        "type": "keyword"
+      }
+    }
+  }
+}

@@ -30,26 +30,41 @@ type esutilOption struct {
 	flushInterval time.Duration
 }
 
-type Location struct {
-	Lat float64 `json:"lat"`
-	Lon float64 `json:"lon"`
+type Document map[string]interface{}
+
+func (d *Document) DocID() string {
+	fields := []string{
+		"_id",
+		"id",
+		"ID",
+		"Id",
+	}
+	for _, field := range fields {
+		if _, ok := (*d)[field]; !ok {
+			continue
+		}
+		switch (*d)[field].(type) {
+		case int:
+			return fmt.Sprintf("%d", (*d)[field].(int))
+		case int64:
+			return fmt.Sprintf("%d", (*d)[field].(int64))
+		case float64:
+			return fmt.Sprintf("%.0f", (*d)[field].(float64))
+		case string:
+			return (*d)[field].(string)
+		default:
+			panic(fmt.Sprintf("unsupported doc id type: %T", (*d)[field]))
+		}
+	}
+	panic("doc_id not found")
 }
 
-type RealEstate struct {
-	ID       int       `json:"id,omitempty"`
-	Name     string    `json:"name"`
-	Location *Location `json:"location,omitempty"`
-}
-
-func (r *RealEstate) DocID() string {
-	return fmt.Sprintf("%d", r.ID)
-}
-
-func (r *RealEstate) Body() io.ReadSeeker {
-	body, err := json.Marshal(r)
+func (d *Document) Body() io.ReadSeeker {
+	body, err := json.Marshal(d)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(string(body))
 	return bytes.NewReader(body)
 }
 
@@ -93,7 +108,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	inputs, err := readRealEstates(os.Stdin)
+	inputs, err := readDocuments(os.Stdin)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -148,8 +163,8 @@ func main() {
 	}
 }
 
-func readRealEstates(input io.Reader) ([]RealEstate, error) {
-	result := make([]RealEstate, 0)
+func readDocuments(input io.Reader) ([]Document, error) {
+	result := make([]Document, 0)
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -157,7 +172,7 @@ func readRealEstates(input io.Reader) ([]RealEstate, error) {
 			continue
 		}
 
-		var r RealEstate
+		var r map[string]interface{}
 		if err := json.Unmarshal([]byte(line), &r); err != nil {
 			return nil, err
 		}

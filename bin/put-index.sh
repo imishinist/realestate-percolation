@@ -16,7 +16,15 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
 fi
 
-curl -X PUT \
+http_code=$(curl -s -f -w "%{http_code}" -o /dev/null \
+    -u elastic:password \
+    http://localhost:9200/$INDEX_NAME)
+if [ $http_code -eq 200 ]; then
+    echo "index already exists" >&2
+    exit 0
+fi
+
+curl -s -X PUT \
     -H "Content-Type: application/json" \
     -u elastic:password \
-    -k http://localhost:9200/$INDEX_NAME -d@${CONFIG_FILE}
+    -k http://localhost:9200/$INDEX_NAME -d@${CONFIG_FILE} | jq
