@@ -19,4 +19,4 @@ fi
 curl -X PUT \
     -H "Content-Type: application/json" \
     -u elastic:password \
-    -k https://localhost:9200/$INDEX_NAME -d@${CONFIG_FILE}
+    -k http://localhost:9200/$INDEX_NAME -d@${CONFIG_FILE}

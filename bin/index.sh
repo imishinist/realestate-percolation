@@ -17,5 +17,5 @@ while read -r line; do
   curl -X POST \
     -H "Content-Type: application/json" \
     -u elastic:password \
-    -k https://localhost:9200/$INDEX_NAME/_doc -d "$line" | jq
+    -k http://localhost:9200/$INDEX_NAME/_doc -d "$line" | jq
 done < $file
